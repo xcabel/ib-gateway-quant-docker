@@ -67,9 +67,22 @@ ENV GATEWAY_OR_TWS=gateway
 # Copy files
 COPY --from=setup /usr/local/i4j_jres/ /usr/local/i4j_jres
 COPY --chown=${USER_ID}:${USER_GID} --from=setup /root/ ${HOME}
+COPY requirements.txt /.
 
 # GCD https://cloud.google.com/vertex-ai/docs/workbench/instances/create-custom-container#:~:text=Vertex%20AI%20Workbench%20instances%20support,a%20Vertex%20AI%20Workbench%20instance.
 ENV MAMBA_ROOT_PREFIX=/opt/micromamba
+
+# Install mambaforge
+ENV MAMBA_ROOT_PREFIX=/opt/micromamba
+
+RUN micromamba create -n micromamba_venv -c conda-forge python=310 -y
+
+SHELL ["micromamba", "run", "-n", "micromamba_venv", "/bin/bash", "-c"]
+
+RUN micromamba install -c conda-forge pip -y
+RUN pip install -r /requirements.txt
+RUN pip install ipykernel
+RUN python -m ipykernel install --prefix /opt/micromamba/envs/micromamba_venv --name micromamba_venv --display-name KERNEL_NAME
 
 # Prepare system
 RUN apt-get update -y && \
