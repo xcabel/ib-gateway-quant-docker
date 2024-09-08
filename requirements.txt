@@ -49,3 +49,4 @@ tzdata==2024.1
 yellowbrick==1.5
 yfinance==0.2.43
 zipline-reloaded==3.0.4
+google-cloud-storage
